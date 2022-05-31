@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  base_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: base_app
+    command: python ./manage.py runserver 0.0.0.0:8000
+    env_file:
+      - .env.dev
+    ports:
+      - "8000:8000"
+    expose:
+      - 8000
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - base_app_network
+  # Database
+  database:
+    container_name: database
+    image: postgres:13.3
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=telegram_bot_wallet
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    networks:
+      - base_app_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d telegram_bot_wallet" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    volumes:
+      - ./files/db:/var/lib/postgresql/data
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+  # PgAdmin server
+  pgAdmin:
+    container_name: pgAdmin
+    image: dpage/pgadmin4:5.7
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=mamedov_99b@mail.ru
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "5050:80"
+    expose:
+      - 80
+    restart: always
+    networks:
+      - base_app_network
+
+networks:
+  base_app_network:
+    driver: bridge
