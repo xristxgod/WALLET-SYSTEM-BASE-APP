@@ -1,6 +1,7 @@
 from typing import List
 
 from django.db import models
+from django.urls import reverse
 
 from src.utils.types import CoinsHelper
 from config import logger
@@ -8,11 +9,16 @@ from config import logger
 # <<<=============================================>>> Helper Table <<<===============================================>>>
 
 class NetworkModel(models.Model):
-    network = models.CharField(primary_key=True, max_length=255, null=False, unique=True)
-    url = models.CharField(max_length=255, null=True, blank=True)
+    network = models.CharField(primary_key=True, max_length=255, null=False, unique=True, verbose_name="Network name")
+    slug = models.SlugField(unique=True, verbose_name="Network slug")
+    url = models.CharField(max_length=255, null=True, blank=True, verbose_name="Blockchain url")
+    descriptions = models.TextField(null=True, blank=True, verbose_name="Network Descriptions")
 
     def __str__(self):
         return self.network
+
+    def get_absolute_url(self):
+        return reverse("network_detail", kwargs={"slug": self.slug})
 
     class Meta:
         verbose_name = 'Network'
@@ -21,14 +27,21 @@ class NetworkModel(models.Model):
 
 
 class TokenModel(models.Model):
-    token = models.CharField(primary_key=True, max_length=255, null=False)
-    network: NetworkModel = models.ForeignKey('NetworkModel', on_delete=models.CASCADE, db_column="network")
-    decimals = models.IntegerField()
-    address = models.CharField(max_length=255, null=False, unique=True)
-    token_info = models.JSONField(null=True, blank=True)
+    token = models.CharField(primary_key=True, max_length=255, null=False, verbose_name="Token name")
+    slug = models.SlugField(unique=True, verbose_name="Token slug")
+    network: NetworkModel = models.ForeignKey(
+        'NetworkModel', on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
+    )
+    decimals = models.IntegerField(verbose_name="Decimals")
+    address = models.CharField(max_length=255, null=False, unique=True, verbose_name="Smart contract address")
+    descriptions = models.TextField(null=True, blank=True, verbose_name="Token Descriptions")
+    token_info = models.JSONField(null=True, blank=True, verbose_name="Additional information about the token")
 
     def __str__(self):
         return f"{self.network.network}-{self.token}"
+
+    def get_absolute_url(self):
+        return reverse("token_detail", kwargs={"slug": self.slug})
 
     class Meta:
         verbose_name = 'Token'
@@ -38,11 +51,15 @@ class TokenModel(models.Model):
 
 class TransactionStatusModel(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
-    title = models.CharField(max_length=255, null=False)
-    description = models.TextField(null=True, blank=True)
+    slug = models.SlugField(unique=True, verbose_name="Transaction status slug")
+    title = models.CharField(max_length=255, null=False, verbose_name="Title")
+    description = models.TextField(null=True, blank=True, verbose_name="Transaction status descriptions")
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("transaction_status_ditail", kwargs={"slug": self.slug})
 
     class Meta:
         verbose_name = 'Transaction status'
@@ -54,16 +71,23 @@ class TransactionStatusModel(models.Model):
 class UserModel(models.Model):
     """Username"""
     id = models.IntegerField(
-        primary_key=True, unique=True, help_text="Chat id from telegram, you can get it only in telegram!"
+        primary_key=True, unique=True, verbose_name="Telegram chat id",
+        help_text="Chat id from telegram, you can get it only in telegram!"
+
     )
     username = models.CharField(
-        max_length=255, blank=True, null=True, help_text="The username from telegram, you can get it only in telegram!"
+        max_length=255, blank=True, null=True, verbose_name="Telegram username",
+        help_text="The username from telegram, you can get it only in telegram!"
     )
+    slug = models.SlugField(unique=True, verbose_name="User slug")
 
-    first_name = models.CharField(max_length=255, blank=True, null=True)
-    last_name = models.CharField(max_length=255, blank=True, null=True)
-    age = models.IntegerField(blank=True, null=True)
-    birthday_data = models.DateTimeField(blank=True, null=True)
+    first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="First name")
+    last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Last name")
+    age = models.IntegerField(blank=True, null=True, verbose_name="Age")
+    birthday_date = models.DateTimeField(blank=True, null=True, verbose_name="Birthday date")
+
+    def get_absolute_url(self):
+        return reverse("user_ditail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if self.username.find("@") == -1:
@@ -80,13 +104,23 @@ class UserModel(models.Model):
 
 
 class WalletModel(models.Model):
-    address = models.CharField(max_length=255, null=False, unique=True)
-    private_key = models.CharField(max_length=255, null=False, unique=True)
-    public_key = models.CharField(max_length=255, null=True, blank=True, unique=True)
-    passphrase = models.CharField(max_length=255, null=True, blank=True)
-    mnemonic_phrase = models.CharField(max_length=255, null=True, blank=True, unique=True)
-    network: NetworkModel = models.ForeignKey('NetworkModel', on_delete=models.CASCADE, db_column="network")
-    user_id: UserModel = models.ForeignKey('UserModel', on_delete=models.CASCADE, db_column="user_id")
+    address = models.CharField(max_length=255, null=False, unique=True, verbose_name="Wallet address")
+    slug = models.SlugField(unique=True, verbose_name="Wallet slug")
+    private_key = models.CharField(max_length=255, null=False, unique=True, verbose_name="Wallet private key")
+    public_key = models.CharField(max_length=255, null=True, blank=True, unique=True, verbose_name="Wallet public key")
+    passphrase = models.CharField(max_length=255, null=True, blank=True, verbose_name="Wallet passphrase")
+    mnemonic_phrase = models.CharField(
+        max_length=255, null=True, blank=True, unique=True, verbose_name="Wallet mnemonic phrase"
+    )
+    network: NetworkModel = models.ForeignKey(
+        'NetworkModel', on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
+    )
+    user_id: UserModel = models.ForeignKey(
+        'UserModel', on_delete=models.CASCADE, db_column="user_id", verbose_name="Who owner?"
+    )
+
+    def get_absolute_url(self):
+        return reverse("wallet_ditail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         try:
@@ -113,18 +147,20 @@ class WalletModel(models.Model):
 
 
 class BalanceModel(models.Model):
-    balance = models.DecimalField(default=0, decimal_places=6, max_digits=18)
+    balance = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Balance")
     wallet: WalletModel = models.ForeignKey(
-        'WalletModel', on_delete=models.CASCADE, db_column="wallet"
+        'WalletModel', on_delete=models.CASCADE, db_column="wallet", verbose_name="Wallet"
     )
     token: TokenModel = models.ForeignKey(
-        'TokenModel', on_delete=models.CASCADE, db_column="token", null=True, blank=True
+        'TokenModel', on_delete=models.CASCADE, db_column="token",
+        null=True, blank=True, verbose_name="Token name"
     )
     network: NetworkModel = models.ForeignKey(
-        'NetworkModel', on_delete=models.CASCADE, db_column="network"
+        'NetworkModel', on_delete=models.CASCADE,
+        db_column="network", verbose_name="Network name"
     )
     user_id: UserModel = models.ForeignKey(
-        'UserModel', on_delete=models.CASCADE, db_column="user_id"
+        'UserModel', on_delete=models.CASCADE, db_column="user_id", verbose_name="User"
     )
 
     def save(self, *args, **kwargs):
@@ -143,21 +179,33 @@ class BalanceModel(models.Model):
 # <<<=============================================>>> Transaction <<<================================================>>>
 
 class TransactionModel(models.Model):
-    time = models.IntegerField()
-    transaction_hash = models.CharField(max_length=255, unique=True, default="-")
-    fee = models.DecimalField(default=0, decimal_places=6, max_digits=18)
-    amount = models.DecimalField(default=0, decimal_places=6, max_digits=18)
-    inputs = models.JSONField(null=True, blank=True)
-    outputs = models.JSONField(null=True, blank=True)
-    network: NetworkModel = models.ForeignKey('NetworkModel', on_delete=models.CASCADE, db_column="network")
+    time = models.IntegerField(verbose_name="Transaction confirmation time")
+    slug = models.SlugField(unique=True, verbose_name="Transaction slug")
+    transaction_hash = models.CharField(max_length=255, unique=True, default="-", verbose_name="Transaction hash")
+    fee = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Transaction commission")
+    amount = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Transaction amount")
+    inputs = models.JSONField(null=True, blank=True, verbose_name="Sender/s")
+    outputs = models.JSONField(null=True, blank=True, verbose_name="Recipient/s")
+    network: NetworkModel = models.ForeignKey(
+        'NetworkModel', on_delete=models.CASCADE,
+        db_column="network", verbose_name="Network name"
+    )
     token: TokenModel = models.ForeignKey(
         'TokenModel', on_delete=models.CASCADE,
-        db_column="token", null=True, blank=True
+        db_column="token", null=True, blank=True,
+        verbose_name="Token name"
     )
     status: TransactionStatusModel = models.ForeignKey(
-        'TransactionStatusModel', on_delete=models.CASCADE, db_column="status"
+        'TransactionStatusModel', on_delete=models.CASCADE,
+        db_column="status", verbose_name="Transaction status"
     )
-    user_id: UserModel = models.ForeignKey('UserModel', on_delete=models.CASCADE, db_column="user_id")
+    user_id: UserModel = models.ForeignKey(
+        'UserModel', on_delete=models.CASCADE,
+        db_column="user_id", verbose_name="Who owner?"
+    )
+
+    def get_absolute_url(self):
+        return reverse("transaction_ditail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if self.token is not None and (self.token.network == self.network.network):
