@@ -84,7 +84,7 @@ class TelegramUserModel(models.Model):
         help_text="The username from telegram, you can get it only in telegram!"
     )
     slug = models.SlugField(unique=True, verbose_name="Telegram user slug")
-    user_id = models.ForeignKey(UserModel, verbose_name='User', on_delete=models.CASCADE)
+    owner_id = models.ForeignKey(UserModel, verbose_name='User', on_delete=models.CASCADE, blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse("user_ditail", kwargs={"slug": self.slug})
@@ -100,7 +100,7 @@ class TelegramUserModel(models.Model):
     class Meta:
         verbose_name = 'Telegram user'
         verbose_name_plural = 'Telegram users'
-        db_table = 'user_model'
+        db_table = 'telegram_user_model'
 
 
 class WalletModel(models.Model):
