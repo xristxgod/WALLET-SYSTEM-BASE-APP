@@ -3,6 +3,7 @@ from typing import List
 from django.db import models
 
 from src.utils.types import CoinsHelper
+from config import logger
 
 # <<<=============================================>>> Helper Table <<<===============================================>>>
 
@@ -77,6 +78,7 @@ class UserModel(models.Model):
         verbose_name_plural = 'Users'
         db_table = 'user_model'
 
+
 class WalletModel(models.Model):
     address = models.CharField(max_length=255, null=False, unique=True)
     private_key = models.CharField(max_length=255, null=False, unique=True)
@@ -87,14 +89,19 @@ class WalletModel(models.Model):
     user_id: UserModel = models.ForeignKey('UserModel', on_delete=models.CASCADE, db_column="user_id")
 
     def save(self, *args, **kwargs):
-        tokens: List[TokenModel] = TokenModel.objects.filter(network=self.network.network)
-        for token in tokens:
-            balance = BalanceModel(
-                wallet=self.id, network=self.network.network,
-                token=token.token, user_id=self.user_id.id
-            )
-            balance.save()
-        super(self).save(*args, **kwargs)
+        try:
+            tokens: List[TokenModel] = TokenModel.objects.filter(network=self.network.network)
+            balance_native = BalanceModel(wallet=self.id, network=self.network.network, user_id=self.user_id.id)
+            balance_native.save()
+            for token in tokens:
+                balance = BalanceModel(
+                    wallet=self.id, network=self.network.network,
+                    token=token.token, user_id=self.user_id.id
+                )
+                balance.save()
+            super(self).save(*args, **kwargs)
+        except Exception as error:
+            logger.error(f"ERROR: {error}")
 
     def __str__(self):
         return f"{self.network.network} | {self.user_id.username}"
@@ -103,6 +110,7 @@ class WalletModel(models.Model):
         verbose_name = 'Wallet'
         verbose_name_plural = 'Wallets'
         db_table = 'wallet_model'
+
 
 class BalanceModel(models.Model):
     balance = models.DecimalField(default=0, decimal_places=6, max_digits=18)
