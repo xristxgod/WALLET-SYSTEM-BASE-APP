@@ -14,7 +14,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'wallet.apps.WalletConfig',
     'rest_framework',
