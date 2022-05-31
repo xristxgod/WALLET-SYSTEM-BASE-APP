@@ -3,10 +3,9 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, View
 
-from wallet.forms.auth import LoginForm
+from wallet.forms.auth import LoginForm, RegistrationForm
 
 class LoginView(View):
-    """Login"""
     def get(self, request, *args, **kwargs):
         form = LoginForm(request.POST or None)
         context = {
@@ -25,3 +24,11 @@ class LoginView(View):
                 return HttpResponseRedirect('/')
         context = {'form': form}
         return render(request, 'login.html', context)
+
+class RegistrationView(View):
+    def get(self, request, *args, **kwargs):
+        form = RegistrationForm(request.POST or None)
+        context = {
+            'form': form,
+        }
+        return render(request, 'registration.html', context)
