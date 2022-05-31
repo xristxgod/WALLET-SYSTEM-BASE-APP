@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db import models
 
 from src.utils.types import CoinsHelper
@@ -83,6 +85,16 @@ class WalletModel(models.Model):
     mnemonic_phrase = models.CharField(max_length=255, null=True, blank=True, unique=True)
     network: NetworkModel = models.ForeignKey('NetworkModel', on_delete=models.CASCADE, db_column="network")
     user_id: UserModel = models.ForeignKey('UserModel', on_delete=models.CASCADE, db_column="user_id")
+
+    def save(self, *args, **kwargs):
+        tokens: List[TokenModel] = TokenModel.objects.filter(network=self.network.network)
+        for token in tokens:
+            balance = BalanceModel(
+                wallet=self.id, network=self.network.network,
+                token=token.token, user_id=self.user_id.id
+            )
+            balance.save()
+        super(self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.network.network} | {self.user_id.username}"
