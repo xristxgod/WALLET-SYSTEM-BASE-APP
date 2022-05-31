@@ -1,10 +1,14 @@
 from typing import List
 
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
 from src.utils.types import CoinsHelper
 from config import logger
+
+
+UserModel = get_user_model()
 
 # <<<=============================================>>> Helper Table <<<===============================================>>>
 
@@ -68,7 +72,7 @@ class TransactionStatusModel(models.Model):
 
 # <<<=============================================>>> User <<<=======================================================>>>
 
-class UserModel(models.Model):
+class TelegramUserModel(models.Model):
     """Username"""
     id = models.IntegerField(
         primary_key=True, unique=True, verbose_name="Telegram chat id",
@@ -79,12 +83,8 @@ class UserModel(models.Model):
         max_length=255, blank=True, null=True, verbose_name="Telegram username",
         help_text="The username from telegram, you can get it only in telegram!"
     )
-    slug = models.SlugField(unique=True, verbose_name="User slug")
-
-    first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="First name")
-    last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Last name")
-    age = models.IntegerField(blank=True, null=True, verbose_name="Age")
-    birthday_date = models.DateTimeField(blank=True, null=True, verbose_name="Birthday date")
+    slug = models.SlugField(unique=True, verbose_name="Telegram user slug")
+    user_id = models.ForeignKey(UserModel, verbose_name='User', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
         return reverse("user_ditail", kwargs={"slug": self.slug})
@@ -98,8 +98,8 @@ class UserModel(models.Model):
         return self.username
 
     class Meta:
-        verbose_name = 'User'
-        verbose_name_plural = 'Users'
+        verbose_name = 'Telegram user'
+        verbose_name_plural = 'Telegram users'
         db_table = 'user_model'
 
 
