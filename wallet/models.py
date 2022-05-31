@@ -8,11 +8,6 @@ class NetworkModel(models.Model):
     network = models.CharField(primary_key=True, max_length=255, null=False, unique=True)
     url = models.CharField(max_length=255, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        self.network = self.network.upper()
-        self.url = self.url[:-1] if self.url is not None and (self.url[-1] == "/") else self.url
-        super(self).save(*args, **kwargs)
-
     def __str__(self):
         return self.network
 
