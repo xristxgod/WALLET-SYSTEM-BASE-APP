@@ -3,8 +3,8 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.urls import reverse
 
+from src.utils.utils import CustomValidator
 from src.utils.types import CoinsHelper
 from config import logger
 
@@ -205,7 +205,7 @@ class TransactionModel(models.Model):
 # <<<=============================================>>> Admin Model <<<================================================>>>
 
 class AdminWithdrawModel(models.Model):
-    time: int = models.IntegerField(verbose_name="Withdraw time")
+    time: int = models.IntegerField(verbose_name="Withdraw time", default=int(datetime.timestamp(datetime.now())))
     amount = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Withdraw amount")
     fee = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Withdraw fee")
     network: NetworkModel = models.ForeignKey(
@@ -230,6 +230,28 @@ class AdminWithdrawModel(models.Model):
 # <<<=============================================>>> Referral Model <<<=============================================>>>
 
 class ReferralModel(models.Model):
+    registration_time = models.IntegerField(default=int(datetime.timestamp(datetime.now())))
+    referral_code = models.CharField(max_length=10, unique=True)
+    referrer_code = models.CharField(
+        max_length=10, null=True, blank=True, validators=[CustomValidator.is_have_referrer_code]
+    )
+    levels = models.JSONField(default={})
+    user_id: UserModel = models.ForeignKey(
+        'UserModel', on_delete=models.CASCADE,
+        db_column="user_id", verbose_name="Who owner?"
+    )
+
+    def __str__(self):
+        return f"{self.user_id.username} | {self.referral_code}"
+
+    class Meta:
+        verbose_name = 'Referral'
+        verbose_name_plural = 'Referrals'
+        db_table = 'referral_model'
+
+# <<<=============================================>>> Promo code Model <<<===========================================>>>
+
+class PromoCodeModel(models.Model):
     pass
 
 # <<<=============================================>>> Profit Model <<<===============================================>>>
