@@ -204,6 +204,16 @@ class TransactionModel(models.Model):
 class AdminWithdrawModel(models.Model):
     time: int = models.IntegerField(verbose_name="Withdraw time")
     amount = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Withdraw amount")
+    fee = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Withdraw fee")
+    network: NetworkModel = models.ForeignKey(
+        'NetworkModel', on_delete=models.CASCADE,
+        db_column="network", verbose_name="Network name"
+    )
+    token: TokenModel = models.ForeignKey(
+        'TokenModel', on_delete=models.CASCADE,
+        db_column="token", null=True, blank=True,
+        verbose_name="Token name"
+    )
     user_ids = models.JSONField(verbose_name="User ids")
 
     def __str__(self):
@@ -217,4 +227,9 @@ class AdminWithdrawModel(models.Model):
 # <<<=============================================>>> Referral Model <<<==============================================>>>
 
 class ReferralModel(models.Model):
+    pass
+
+# <<<=============================================>>> Profit Model <<<===============================================>>>
+
+class ProfitModel(models.Model):
     pass
