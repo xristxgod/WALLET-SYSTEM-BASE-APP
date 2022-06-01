@@ -1,4 +1,5 @@
 from typing import List
+from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -221,3 +222,18 @@ class TransactionModel(models.Model):
         verbose_name = 'Transaction'
         verbose_name_plural = 'Transactions'
         db_table = 'transaction_model'
+
+# <<<=============================================>>> Admin Model <<<================================================>>>
+
+class AdminWithdrawModel(models.Model):
+    time: int = models.IntegerField(verbose_name="Withdraw time")
+    amount = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Withdraw amount")
+    user_ids = models.JSONField(verbose_name="User ids")
+
+    def __str__(self):
+        return f"{datetime.fromtimestamp(self.time)} | Users count: {len(self.user_ids)}"
+
+    class Meta:
+        verbose_name = 'Admin Withdraw'
+        verbose_name_plural = 'Admin Withdraws'
+        db_table = 'admin_withdraw_model'
