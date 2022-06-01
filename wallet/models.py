@@ -15,15 +15,11 @@ UserModel = get_user_model()
 
 class NetworkModel(models.Model):
     network = models.CharField(primary_key=True, max_length=255, null=False, unique=True, verbose_name="Network name")
-    slug = models.SlugField(unique=True, verbose_name="Network slug")
     url = models.URLField(max_length=255, null=True, blank=True, verbose_name="Blockchain url")
     descriptions = models.TextField(null=True, blank=True, verbose_name="Network Descriptions")
 
     def __str__(self):
         return self.network
-
-    def get_absolute_url(self):
-        return reverse("network_detail", kwargs={"slug": self.slug})
 
     class Meta:
         verbose_name = 'Network'
@@ -32,8 +28,7 @@ class NetworkModel(models.Model):
 
 
 class TokenModel(models.Model):
-    token = models.CharField(primary_key=True, max_length=255, null=False, verbose_name="Token name")
-    slug = models.SlugField(unique=True, verbose_name="Token slug")
+    token = models.CharField(max_length=255, null=False, verbose_name="Token name")
     network: NetworkModel = models.ForeignKey(
         'NetworkModel', on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
     )
@@ -45,9 +40,6 @@ class TokenModel(models.Model):
     def __str__(self):
         return f"{self.network.network}-{self.token}"
 
-    def get_absolute_url(self):
-        return reverse("token_detail", kwargs={"slug": self.slug})
-
     class Meta:
         verbose_name = 'Token'
         verbose_name_plural = 'Tokens'
@@ -56,15 +48,11 @@ class TokenModel(models.Model):
 
 class TransactionStatusModel(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
-    slug = models.SlugField(unique=True, verbose_name="Transaction status slug")
     title = models.CharField(max_length=255, null=False, verbose_name="Title")
     description = models.TextField(null=True, blank=True, verbose_name="Transaction status descriptions")
 
     def __str__(self):
         return self.title
-
-    def get_absolute_url(self):
-        return reverse("transaction_status_ditail", kwargs={"slug": self.slug})
 
     class Meta:
         verbose_name = 'Transaction status'
@@ -84,11 +72,7 @@ class TelegramUserModel(models.Model):
         max_length=255, blank=True, null=True, verbose_name="Telegram username",
         help_text="The username from telegram, you can get it only in telegram!"
     )
-    slug = models.SlugField(unique=True, verbose_name="Telegram user slug")
     owner_id = models.ForeignKey(UserModel, verbose_name='User', on_delete=models.CASCADE, blank=True, null=True)
-
-    def get_absolute_url(self):
-        return reverse("user_ditail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if self.username.find("@") == -1:
@@ -106,7 +90,6 @@ class TelegramUserModel(models.Model):
 
 class WalletModel(models.Model):
     address = models.CharField(max_length=255, null=False, unique=True, verbose_name="Wallet address")
-    slug = models.SlugField(unique=True, verbose_name="Wallet slug")
     private_key = models.CharField(max_length=255, null=False, unique=True, verbose_name="Wallet private key")
     public_key = models.CharField(max_length=255, null=True, blank=True, unique=True, verbose_name="Wallet public key")
     passphrase = models.CharField(max_length=255, null=True, blank=True, verbose_name="Wallet passphrase")
@@ -119,9 +102,6 @@ class WalletModel(models.Model):
     user_id: UserModel = models.ForeignKey(
         'UserModel', on_delete=models.CASCADE, db_column="user_id", verbose_name="Who owner?"
     )
-
-    def get_absolute_url(self):
-        return reverse("wallet_ditail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         try:
@@ -181,7 +161,6 @@ class BalanceModel(models.Model):
 
 class TransactionModel(models.Model):
     time = models.IntegerField(verbose_name="Transaction confirmation time")
-    slug = models.SlugField(unique=True, verbose_name="Transaction slug")
     transaction_hash = models.CharField(max_length=255, unique=True, default="-", verbose_name="Transaction hash")
     fee = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Transaction commission")
     amount = models.DecimalField(default=0, decimal_places=6, max_digits=18, verbose_name="Transaction amount")
@@ -204,9 +183,6 @@ class TransactionModel(models.Model):
         'UserModel', on_delete=models.CASCADE,
         db_column="user_id", verbose_name="Who owner?"
     )
-
-    def get_absolute_url(self):
-        return reverse("transaction_ditail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if self.token is not None and (self.token.network == self.network.network):
@@ -237,3 +213,8 @@ class AdminWithdrawModel(models.Model):
         verbose_name = 'Admin Withdraw'
         verbose_name_plural = 'Admin Withdraws'
         db_table = 'admin_withdraw_model'
+
+# <<<=============================================>>> Referral Model <<<==============================================>>>
+
+class ReferralModel(models.Model):
+    pass
