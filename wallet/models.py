@@ -15,7 +15,7 @@ UserModel = get_user_model()
 class NetworkModel(models.Model):
     network = models.CharField(primary_key=True, max_length=255, null=False, unique=True, verbose_name="Network name")
     slug = models.SlugField(unique=True, verbose_name="Network slug")
-    url = models.CharField(max_length=255, null=True, blank=True, verbose_name="Blockchain url")
+    url = models.URLField(max_length=255, null=True, blank=True, verbose_name="Blockchain url")
     descriptions = models.TextField(null=True, blank=True, verbose_name="Network Descriptions")
 
     def __str__(self):
