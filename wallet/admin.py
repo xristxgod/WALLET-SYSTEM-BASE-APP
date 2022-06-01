@@ -5,6 +5,7 @@ from wallet.models import (
     UserModel, WalletModel, BalanceModel,
     TransactionModel
 )
+from wallet.models import AdminWithdrawModel
 
 # <<<=============================================>>> Helper Admin <<<===============================================>>>
 
@@ -66,3 +67,12 @@ class TransactionModelAdmin(admin.ModelAdmin):
     search_fields = ("transaction_hash", "network", "token", "user_id")
     list_filter = ("transaction_hash", "network", "token", "user_id")
     prepopulated_fields = {"slug": ("transaction_hash", "network", "token", "user_id")}
+
+# <<<=============================================>>> Admin Withdrew Admin <<<=======================================>>>
+
+@admin.register(AdminWithdrawModel)
+class AdminWithdrawModelAdmin(admin.ModelAdmin):
+    list_display = ("time", "amount")
+    list_display_links = ("time", "amount")
+    search_fields = ("time", "amount")
+    list_filter = ("time", "amount")
