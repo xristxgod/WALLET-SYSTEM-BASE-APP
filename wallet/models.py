@@ -15,6 +15,7 @@ UserModel = get_user_model()
 
 class NetworkModel(models.Model):
     network = models.CharField(primary_key=True, max_length=255, null=False, unique=True, verbose_name="Network name")
+    logo = models.ImageField()
     url = models.URLField(max_length=255, null=True, blank=True, verbose_name="Blockchain url")
     descriptions = models.TextField(null=True, blank=True, verbose_name="Network Descriptions")
 
@@ -29,6 +30,7 @@ class NetworkModel(models.Model):
 
 class TokenModel(models.Model):
     token = models.CharField(max_length=255, null=False, verbose_name="Token name")
+    logo = models.ImageField()
     network: NetworkModel = models.ForeignKey(
         'NetworkModel', on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
     )
@@ -48,6 +50,7 @@ class TokenModel(models.Model):
 
 class TransactionStatusModel(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
+    logo = models.ImageField()
     title = models.CharField(max_length=255, null=False, verbose_name="Title")
     description = models.TextField(null=True, blank=True, verbose_name="Transaction status descriptions")
 
@@ -224,7 +227,7 @@ class AdminWithdrawModel(models.Model):
         verbose_name_plural = 'Admin Withdraws'
         db_table = 'admin_withdraw_model'
 
-# <<<=============================================>>> Referral Model <<<==============================================>>>
+# <<<=============================================>>> Referral Model <<<=============================================>>>
 
 class ReferralModel(models.Model):
     pass
