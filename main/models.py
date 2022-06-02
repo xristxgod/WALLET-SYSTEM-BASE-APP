@@ -138,7 +138,7 @@ class TransactionStatusModel(models.Model, BaseFilter):
         return truncatechars(self.description, 30) if len(self.description) > 30 else "Not description"
 
     def save(self, *args, **kwargs):
-        self.token = self.title.upper()
+        self.title = self.title.upper()
         super().save(*args, **kwargs)
 
     @property
