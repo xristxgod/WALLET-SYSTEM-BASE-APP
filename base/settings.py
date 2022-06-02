@@ -101,3 +101,5 @@ CRISPY_TEPLATE_PACK = 'bootstrap5'
 
 LOGIN_URL = 'sign/login/'
 LOGIN_REDIRECT_URL = '/'
+
+AUTH_USER_MODEL = 'main.UserModel'
