@@ -4,6 +4,8 @@ from config import Config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_FILES = os.path.join(BASE_DIR, "files")
+BASE_DEV_FILES = os.path.join(BASE_DIR, "dev_files")
+
 SECRET_KEY = Config.BASE_APP_SECRET_KEY
 
 DEBUG = Config.DEBUG
@@ -92,7 +94,9 @@ STATIC_ROOT = os.path.join(BASE_FILES, STATIC_URL[:-1])
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_FILES, MEDIA_URL[:-1])
 
-STATICFILES_DIRS = (os.path.join(BASE_FILES, f"{STATIC_URL[:-1]}_dev"),)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DEV_FILES, f"{STATIC_URL[:-1]}"),
+)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -101,4 +105,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 LOGIN_URL = 'sign/login/'
 LOGIN_REDIRECT_URL = '/'
 
+# Custom user model
 AUTH_USER_MODEL = 'main.UserModel'
