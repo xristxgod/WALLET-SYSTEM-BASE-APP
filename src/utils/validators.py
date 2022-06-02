@@ -7,8 +7,16 @@ class CustomValidators:
     @staticmethod
     def validate_logo(logo):
         width, height = get_image_dimensions(logo)
-        if 100 > width > 300:
+        if width > 300 or width < 100:
             raise ValidationError("The image is %i pixel wide. It's supposed to be 200px" % width)
-        elif 100 > height > 300:
+        elif height > 300 or height < 100:
             raise ValidationError("The image is %i pixel high. It's supposed to be 200px" % height)
+
+    @staticmethod
+    def validate_image_expansion(image):
+        _, extension = image.split(".")
+        if extension not in ["png", "ico", "jpeg"]:
+            raise ValidationError("the extension of the image: {} and should be {}.".format(
+                extension, ["png", "ico", "jpeg"]
+            ))
 
