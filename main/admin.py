@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from main.models import UserModel
-from main.models import NetworkModel, TokenModel
+from main.models import NetworkModel, TokenModel, TransactionStatusModel
 
 
 @admin.register(UserModel)
@@ -69,4 +69,14 @@ class TokenModelAdmin(admin.ModelAdmin):
     list_display_links = ("token", "network")
     search_fields = ("token", "network", "decimals", "address")
     list_filter = ("token", "network", "decimals", "address")
+    readonly_fields = ('show_field',)
+
+
+@admin.register(TransactionStatusModel)
+class TransactionStatusModelAdmin(admin.ModelAdmin):
+    fields = ("id", "title", "description", "logo", "show_field")
+    list_display = ("id", "title", "show_display")
+    list_display_links = ("id", "title", "short_description")
+    search_fields = ("id", "title")
+    list_filter = ("id", "title")
     readonly_fields = ('show_field',)

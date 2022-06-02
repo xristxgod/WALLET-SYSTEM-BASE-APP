@@ -12,3 +12,7 @@ class ImageFilter:
     @property
     def show_field(self):
         raise NotImplementedError
+
+
+class BaseFilter(DescriptionFilter, ImageFilter):
+    pass
