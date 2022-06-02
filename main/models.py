@@ -70,7 +70,7 @@ class NetworkModel(models.Model, DescriptionFilter, ImageFilter):
         db_table = 'network_model'
 
 
-class TokenModel(models.Model, DescriptionFilter, ImageFilter):
+class TokenModel(models.Model, DescriptionFilter, ImageFilter, DescriptionFilter):
     token: str = models.CharField(verbose_name="Token name", max_length=15)
     network: str = models.ForeignKey(
         "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
@@ -81,13 +81,34 @@ class TokenModel(models.Model, DescriptionFilter, ImageFilter):
     decimals = models.IntegerField(verbose_name="Token decimals", validators=[
         MinValueValidator(0), MaxValueValidator(20)
     ])
-    address = models.CharField(verbose_name="Token smart contract address", validators=[
-        CustomValidators.validate_address(network)
-    ])
+    address = models.CharField(verbose_name="Token smart contract address")
+    description: str = models.TextField(blank=True, null=True, verbose_name="Token description")
+    token_info = models.JSONField(blank=True, null=True, verbose_name="Token info")
 
+    def __str__(self):
+        return f"{self.network}-{self.token}"
+
+    @property
+    def short_description(self):
+        return truncatechars(self.description, 30) if len(self.description) > 30 else "Not description"
 
     def save(self, *args, **kwargs):
         self.token = self.token.upper()
         super().save(*args, **kwargs)
 
+    @property
+    def show_display(self):
+        if self.logo.name:
+            return UtilsImage.image_url(image_url=self.logo.url, method="display")
+        return "Not logo"
 
+    @property
+    def show_field(self):
+        if self.logo.name:
+            return UtilsImage.image_url(image_url=self.logo.url, method="field")
+        return "Not logo"
+
+    class Meta:
+        verbose_name = 'Token'
+        verbose_name_plural = 'Tokens'
+        db_table = 'token_model'

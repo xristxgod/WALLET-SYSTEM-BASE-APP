@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
 
-from src.utils.types import CRYPTO_NETWORK, CRYPTO_ADDRESS, ADDRESS_PREFIX
+from src.utils.types import CRYPTO_NETWORK, CRYPTO_ADDRESS
 
 
 class CustomValidators:
@@ -20,11 +20,4 @@ class CustomValidators:
         if extension not in ["png", "ico", "jpeg"]:
             raise ValidationError("the extension of the image: {} and should be {}.".format(
                 extension, ["png", "ico", "jpeg"]
-            ))
-
-    @staticmethod
-    def validate_address(network: CRYPTO_NETWORK, address: CRYPTO_ADDRESS):
-        if address[0] not in ADDRESS_PREFIX[network]:
-            raise ValidationError('This crypto wallet: {} should start with these sims: {}'.format(
-                address, ADDRESS_PREFIX[network]
             ))
