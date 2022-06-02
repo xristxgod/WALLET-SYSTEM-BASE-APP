@@ -10,17 +10,33 @@ class UserModelAdmin(UserAdmin):
     add_fieldsets = (
         *UserAdmin.add_fieldsets,
         (
+            "Photo",
+            {
+                "fields": (
+                    "profile_picture",
+                )
+            }
+        ),
+        (
             "Telegram info",
             {
                 "fields": (
                     "telegram_chat_id",
                 )
             }
-        )
+        ),
     )
 
     fieldsets = (
         *UserAdmin.fieldsets,
+        (
+            "Photo",
+            {
+                "fields": (
+                    "profile_picture",
+                )
+            }
+        ),
         (
             "Telegram info",
             {
