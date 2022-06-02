@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from main.models import UserModel
-from main.models import NetworkModel
+from main.models import NetworkModel, TokenModel
 
 
 @admin.register(UserModel)
@@ -59,4 +59,14 @@ class NetworkModelAdmin(admin.ModelAdmin):
     list_display_links = ("network", "blockchain_url")
     search_fields = ("network",)
     list_filter = ("network",)
+    readonly_fields = ('show_field',)
+
+
+@admin.register(TokenModel)
+class TokenModelAdmin(admin.ModelAdmin):
+    fields = ("token", "network", "decimals", "address", "description", "token_info", "logo", "show_field")
+    list_display = ("token", "network", "address", "show_display")
+    list_display_links = ("token", "network")
+    search_fields = ("token", "network", "decimals", "address")
+    list_filter = ("token", "network", "decimals", "address")
     readonly_fields = ('show_field',)
