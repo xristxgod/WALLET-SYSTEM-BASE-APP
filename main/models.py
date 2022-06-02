@@ -70,7 +70,7 @@ class NetworkModel(models.Model, DescriptionFilter, ImageFilter):
         db_table = 'network_model'
 
 
-class TokenModel(models.Model, DescriptionFilter, ImageFilter, DescriptionFilter):
+class TokenModel(models.Model, ImageFilter, DescriptionFilter):
     token: str = models.CharField(verbose_name="Token name", max_length=15)
     network: str = models.ForeignKey(
         "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
@@ -81,7 +81,7 @@ class TokenModel(models.Model, DescriptionFilter, ImageFilter, DescriptionFilter
     decimals = models.IntegerField(verbose_name="Token decimals", validators=[
         MinValueValidator(0), MaxValueValidator(20)
     ])
-    address = models.CharField(verbose_name="Token smart contract address")
+    address = models.CharField(verbose_name="Token smart contract address", max_length=255)
     description: str = models.TextField(blank=True, null=True, verbose_name="Token description")
     token_info = models.JSONField(blank=True, null=True, verbose_name="Token info")
 
