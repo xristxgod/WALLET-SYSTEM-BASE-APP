@@ -76,7 +76,7 @@ class TokenModelAdmin(admin.ModelAdmin):
 class TransactionStatusModelAdmin(admin.ModelAdmin):
     fields = ("id", "title", "description", "logo", "show_field")
     list_display = ("id", "title", "show_display")
-    list_display_links = ("id", "title", "short_description")
+    list_display_links = ("id", "title")
     search_fields = ("id", "title")
     list_filter = ("id", "title")
     readonly_fields = ('show_field',)
