@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import truncatechars
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 
 from src.utils.utils import UtilsImage
@@ -69,18 +70,24 @@ class NetworkModel(models.Model, DescriptionFilter, ImageFilter):
         db_table = 'network_model'
 
 
-# class TokenModel(models.Model, DescriptionFilter, ImageFilter):
-#     token: str = models.CharField(verbose_name="Token name", max_length=15)
-#     network: str = models.ForeignKey(
-#         "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
-#     )
-#     logo = models.ImageField(
-#             blank=True, null=True, verbose_name="Token logo", validators=[CustomValidators.validate_logo]
-#     )
+class TokenModel(models.Model, DescriptionFilter, ImageFilter):
+    token: str = models.CharField(verbose_name="Token name", max_length=15)
+    network: str = models.ForeignKey(
+        "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name"
+    )
+    logo = models.ImageField(
+            blank=True, null=True, verbose_name="Token logo", validators=[CustomValidators.validate_logo]
+    )
+    decimals = models.IntegerField(verbose_name="Token decimals", validators=[
+        MinValueValidator(0), MaxValueValidator(20)
+    ])
+    address = models.CharField(verbose_name="Token smart contract address", validators=[
+        CustomValidators.validate_address(network)
+    ])
 
 
-# def save(self, *args, **kwargs):
-#     self.token = self.token.upper()
-#     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.token = self.token.upper()
+        super().save(*args, **kwargs)
 
 
