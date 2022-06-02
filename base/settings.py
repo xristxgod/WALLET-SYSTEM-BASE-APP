@@ -98,3 +98,6 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEPLATE_PACK = 'bootstrap5'
+
+LOGIN_URL = 'sign/login/'
+LOGIN_REDIRECT_URL = '/'
