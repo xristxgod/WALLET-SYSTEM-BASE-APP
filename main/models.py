@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import truncatechars
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 from src.utils.utils import UtilsImage
 from src.utils.filters import BaseFilter, ImageFilter
@@ -176,7 +177,7 @@ class WalletModel(models.Model):
         "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name",
     )
     user_id = models.ForeignKey(
-        "UserModel", on_delete=models.CASCADE, db_column="user_id", verbose_name="Owner id"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column="user_id", verbose_name="Owner id"
     )
 
     def __str__(self):
