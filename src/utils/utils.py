@@ -2,7 +2,7 @@ from django.utils.safestring import mark_safe
 from django.db import models
 
 class UtilsImage:
-
+    """Utils for image"""
     @staticmethod
     def image_url(image_url: str = None, method: str = "display"):
         if image_url is None:

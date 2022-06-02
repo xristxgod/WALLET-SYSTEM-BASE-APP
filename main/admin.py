@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from main.models import UserModel
 from main.models import NetworkModel, TokenModel, TransactionStatusModel
-
+from main.models import WalletModel
 
 @admin.register(UserModel)
 class UserModelAdmin(UserAdmin):
@@ -80,3 +80,11 @@ class TransactionStatusModelAdmin(admin.ModelAdmin):
     search_fields = ("id", "title")
     list_filter = ("id", "title")
     readonly_fields = ('show_field',)
+
+
+@admin.register(WalletModel)
+class WalletModelAdmin(admin.ModelAdmin):
+    list_display = ("address", "network", "user_id")
+    list_display_links = ("address", "network", "user_id")
+    search_fields = ("address", "network", "user_id")
+    list_filter = ("address", "network", "user_id")

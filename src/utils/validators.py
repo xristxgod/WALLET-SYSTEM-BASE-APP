@@ -1,13 +1,15 @@
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
 
-from src.utils.types import CRYPTO_NETWORK, CRYPTO_ADDRESS
+from src.utils.types import CRYPTO_NETWORK, CRYPTO_ADDRESS, CRYPTO_MNEMONIC
 
 
-class CustomValidators:
-    """Custom validators"""
+class ImageValidators:
+    """Image validators"""
     @staticmethod
-    def validate_logo(logo):
+    def validate_logo(logo) -> Optional:
         width, height = get_image_dimensions(logo)
         if width > 300 or width < 100:
             raise ValidationError("The image is %i pixel wide. It's supposed to be 200px" % width)
@@ -15,9 +17,23 @@ class CustomValidators:
             raise ValidationError("The image is %i pixel high. It's supposed to be 200px" % height)
 
     @staticmethod
-    def validate_image_expansion(image):
+    def validate_image_expansion(image) -> Optional:
         _, extension = image.split(".")
         if extension not in ["png", "ico", "jpeg"]:
-            raise ValidationError("the extension of the image: {} and should be {}.".format(
+            raise ValidationError("The extension of the image: {} and should be {}.".format(
                 extension, ["png", "ico", "jpeg"]
             ))
+
+
+class WalletValidators:
+    """Wallet validators"""
+    LEN_MNEMONIC = [3, 6, 9, 12, 15, 18, 21, 24]
+
+    @staticmethod
+    def validate_mnemonic(mnemonic: CRYPTO_MNEMONIC) -> Optional:
+        if len(mnemonic.split(" ")) not in WalletValidators.LEN_MNEMONIC:
+            raise ValidationError("The mnemonic phrase should consist of {} words, and you have only: {}.".format(
+                WalletValidators.LEN_MNEMONIC, len(mnemonic.split(" "))
+            ))
+        if len(mnemonic.split(" ")) != len(set(mnemonic.split(" "))):
+            raise ValidationError("The mnemonic phrase has duplicate meanings!")
