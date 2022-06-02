@@ -15,9 +15,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api.apps.ApiConfig',
-    'wallet.apps.WalletConfig',
+
     'rest_framework',
+
+    'api.apps.ApiConfig',
+    'main.apps.MainConfig',
+    'sign.apps.SignConfig',
 ]
 
 MIDDLEWARE = [
@@ -35,7 +38,7 @@ ROOT_URLCONF = 'base.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'wallet/files/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'files/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,13 +86,13 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'wallet/files/static'),
+STATIC_ROOT = os.path.join(BASE_DIR, 'files/static'),
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'wallet/files/media'),
+MEDIA_ROOT = os.path.join(BASE_DIR, 'files/media'),
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'wallet/files/static'),
+    os.path.join(BASE_DIR, 'files/static'),
 )
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
