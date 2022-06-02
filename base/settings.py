@@ -87,14 +87,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_FILES, "static")
+STATIC_ROOT = os.path.join(BASE_FILES, STATIC_URL[:-1])
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_FILES, 'media'),
+MEDIA_ROOT = os.path.join(BASE_FILES, MEDIA_URL[:-1])
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_FILES, 'static'),
-)
+STATICFILES_DIRS = (os.path.join(BASE_FILES, f"{STATIC_URL[:-1]}_dev"),)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -104,5 +102,3 @@ LOGIN_URL = 'sign/login/'
 LOGIN_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'main.UserModel'
-
-print(STATICFILES_DIRS)
