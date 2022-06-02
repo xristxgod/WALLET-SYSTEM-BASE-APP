@@ -3,6 +3,7 @@ from pathlib import Path
 from config import Config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_FILES = os.path.join(BASE_DIR, "files")
 SECRET_KEY = Config.BASE_APP_SECRET_KEY
 
 DEBUG = Config.DEBUG
@@ -86,20 +87,22 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'files/static'),
+STATIC_ROOT = os.path.join(BASE_FILES, "static")
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'files/media'),
+MEDIA_ROOT = os.path.join(BASE_FILES, 'media'),
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'files/static'),
+    os.path.join(BASE_FILES, 'static'),
 )
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CRISPY_TEPLATE_PACK = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 LOGIN_URL = 'sign/login/'
 LOGIN_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'main.UserModel'
+
+print(STATICFILES_DIRS)
