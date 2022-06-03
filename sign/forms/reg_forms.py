@@ -14,8 +14,6 @@ class RegistrationForm:
     class Meta:
         model = UserModel
         fields = [
-            'username', 'first_name',
-            'last_name', 'password',
-            'confirm_password', 'phone',
-            'telegram_chat_id', 'email', "profile_picture"
+            'username', 'first_name', 'last_name', 'password', 'confirm_password',
+            'phone', 'telegram_chat_id', 'email', "profile_picture"
         ]
