@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, List, Dict
 
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
 
+from src.utils.utils import Utils
 from src.utils.types import CRYPTO_NETWORK, CRYPTO_ADDRESS, CRYPTO_MNEMONIC
 
 
@@ -37,3 +38,18 @@ class WalletValidators:
             ))
         if len(mnemonic.split(" ")) != len(set(mnemonic.split(" "))):
             raise ValidationError("The mnemonic phrase has duplicate meanings!")
+
+
+class TransactionValidators:
+    """Transaction validators"""
+    @staticmethod
+    def validate_participants(participants: List[Dict[CRYPTO_ADDRESS, float]]):
+        if participants != {}:
+            for participant in participants:
+                if participant.keys() not in ["address", "amount"]:
+                    raise ValidationError((
+                        "This type of data is not suitable. The list should consist of dictionaries. "
+                        "Example: [{'address': wallet_address, 'amount': 12.3312}]"
+                    ))
+                if not Utils.is_number(participant.get("amount")):
+                    raise ValidationError("The amount value must be a number!")

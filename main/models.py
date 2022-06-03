@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.template.defaultfilters import truncatechars
 from django.core.exceptions import ValidationError
@@ -8,7 +10,7 @@ from django.conf import settings
 from src.utils.types import CoinHelper
 from src.utils.utils import UtilsImage
 from src.utils.filters import BaseFilter, ImageFilter
-from src.utils.validators import ImageValidators, WalletValidators
+from src.utils.validators import ImageValidators, WalletValidators, TransactionValidators
 
 
 class UserModel(AbstractUser, ImageFilter):
@@ -256,3 +258,45 @@ class BalanceModel(models.Model):
         verbose_name = 'Wallet balance'
         verbose_name_plural = 'Wallet balances'
         db_table = 'balance_model'
+
+
+class TransactionModel(models.Model):
+    time = models.IntegerField(verbose_name="The time of creation/sending/acceptance of the transaction")
+    transaction_hash = models.CharField(
+        verbose_name="Transaction hash", unique=True, max_length=255,
+        null=True, blank=True, default=uuid.uuid4().hex
+    )
+    fee = models.DecimalField(
+        decimal_places=6, max_digits=18, verbose_name="Transaction commission",
+        null=True, blank=True, default=0
+    )
+    amount = models.DecimalField(
+        decimal_places=6, max_digits=18, verbose_name="Transaction amount",
+        null=True, blank=True, default=0
+    )
+    inputs = models.JSONField(
+        verbose_name="Sender/s transaction", default={}, validators=[TransactionValidators.validate_participants]
+    )
+    outputs = models.JSONField(
+        verbose_name="Recipient/s transaction", default={}, validators=[TransactionValidators.validate_participants]
+    )
+    status = models.ForeignKey(
+        "TransactionStatusModel", on_delete=models.SET_DEFAULT, default="Unknown",
+        db_column="status", verbose_name="Status"
+    )
+    network: NetworkModel = models.ForeignKey(
+        "NetworkModel", on_delete=models.CASCADE, db_column="network",
+        verbose_name="Network name", blank=True, null=True
+    )
+    token: TokenModel = models.ForeignKey(
+        "TokenModel", on_delete=models.CASCADE, db_column="token",
+        verbose_name="Token name", blank=True, null=True
+    )
+    user_id: UserModel = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column="user_id", verbose_name="Owner id"
+    )
+
+    class Meta:
+        verbose_name = 'Transaction'
+        verbose_name_plural = 'Transactions'
+        db_table = 'transaction_model'
