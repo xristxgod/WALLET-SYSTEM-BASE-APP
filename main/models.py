@@ -1,4 +1,5 @@
 import uuid
+import json
 
 from django.db import models
 from django.template.defaultfilters import truncatechars
@@ -275,10 +276,12 @@ class TransactionModel(models.Model):
         null=True, blank=True, default=0
     )
     inputs = models.JSONField(
-        verbose_name="Sender/s transaction", default={}, validators=[TransactionValidators.validate_participants]
+        verbose_name="Sender/s transaction", default=dict,
+        validators=[TransactionValidators.validate_participants]
     )
     outputs = models.JSONField(
-        verbose_name="Recipient/s transaction", default={}, validators=[TransactionValidators.validate_participants]
+        verbose_name="Recipient/s transaction", default=dict,
+        validators=[TransactionValidators.validate_participants]
     )
     status = models.ForeignKey(
         "TransactionStatusModel", on_delete=models.SET_DEFAULT, default="Unknown",
