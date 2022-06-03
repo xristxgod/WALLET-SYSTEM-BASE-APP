@@ -1,10 +1,12 @@
-from django.shortcuts import render
+import json
+
+from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 
 from main.models import UserModel
-from sign.forms.auth_forms import LoginAuthenticationForm
+from sign.forms.auth_forms import LoginAuthenticationForm, LoginGoogleAuthForm
 from src.utils.utils import Utils
 from src.utils.types import TELEGRAM_USER_ID
 from src.sender.sender_to_telegram import SenderToTelegram
@@ -37,11 +39,29 @@ class LoginAuthenticationView(View):
                     return HttpResponseRedirect("/login/telegram-auth")
             else:
                 # In this case, the user has been in the system more than once and we simply authorize him.
-                if user.google_auth_code is None:
+                if not user.google_auth_code is None:
+                # if user.google_auth_code is None:
                     user = authenticate(username=user.username, password=user.password)
                     login(request, user)
                     # We notify the telegram bot that we have logged in!
                     SenderToTelegram.auth_info(chat_id=chat_id)
                     return HttpResponseRedirect("/")
-                return HttpResponseRedirect("/login/google-auth")
+                else:
+                    params = json.dumps({"user_id": user.id}).encode("utf-8").hex()
+                    return redirect("login_google_auth", params=params)
         return render(request, "auth/authentication_page.html", {"form": form})
+
+
+class LoginGoogleAuthView(View):
+
+    def get(self, request, *args, **kwargs):
+        form = LoginGoogleAuthForm(request.POST or None)
+        context = {
+            "form": form
+        }
+        return render(request, "auth/google_auth_page.html", context)
+
+    def post(self, request, *args, **kwargs):
+        form = LoginGoogleAuthForm(request.POST or None)
+        if form.is_valid():
+            params = json.loads(bytes.fromhex(kwargs.get('params')).decode("utf-8"))

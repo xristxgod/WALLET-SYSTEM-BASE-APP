@@ -29,3 +29,8 @@ class LoginAuthenticationForm(forms.ModelForm):
     class Meta:
         model = UserModel
         fields = ['password']
+
+
+class LoginGoogleAuthForm(forms.Form):
+    """Google auth form"""
+    code = forms.CharField(max_length=6)
