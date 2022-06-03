@@ -289,7 +289,7 @@ class TransactionModel(models.Model, DatetimeFilter, ImageFilter):
         verbose_name="Recipient/s transaction", default=dict,
         validators=[TransactionValidators.validate_participants]
     )
-    status = models.ForeignKey(
+    status: TransactionStatusModel = models.ForeignKey(
         "TransactionStatusModel", on_delete=models.SET_DEFAULT, default="Unknown",
         db_column="status", verbose_name="Status"
     )
