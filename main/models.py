@@ -302,6 +302,10 @@ class TransactionModel(models.Model):
     def __str__(self):
         return f"{self.user_id}|{self.network}|{self.transaction_hash[:5]}"
 
+    def save(self, *args, **kwargs):
+        if self.network.network == self.token.network:
+            super().save(*args, **kwargs)
+
     def clean(self):
         if self.token and self.network != self.token.network:
             raise ValidationError(
