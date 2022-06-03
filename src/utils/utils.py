@@ -54,3 +54,7 @@ class Utils:
     @staticmethod
     def temporary_password(chat_id: int) -> str:
         return f"temporary_password_{chat_id}"
+
+    @staticmethod
+    def is_have_time(timestamp: int, hours: int = 0, minutes: int = 0, seconds: int = 0) -> bool:
+        pass

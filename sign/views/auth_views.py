@@ -32,11 +32,13 @@ class LoginAuthenticationView(View):
                     user.check_password(Utils.temporary_password(chat_id=user.telegram_chat_id)):
                 # If the user does not have a password, then he is registered via Telegram.
                 # You should send an SMS with the code to his Telegram account
-                pass
+                code = SenderToTelegram.auto_code(chat_id=chat_id)
+
             else:
                 # In this case, the user has been in the system more than once and we simply authorize him.
                 user = authenticate(username=user.username, password=user.password)
                 login(request, user)
+                # We notify the telegram bot that we have logged in!
                 SenderToTelegram.auth_info(chat_id=chat_id)
                 return HttpResponseRedirect("/")
         return render(request, "auth/authentication_page.html", {"form": form})
