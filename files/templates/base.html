@@ -5,6 +5,16 @@
     <title>{% block title %}Wallet system{% endblock %}</title>
 </head>
 <body>
+
+{% if messages %}
+{% for message in messages %}
+<div role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif%}
+
 {% block content %}
 <h1>Base content</h1>
 {% endblock %}
