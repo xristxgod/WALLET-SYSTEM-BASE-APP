@@ -199,16 +199,16 @@ class WalletModel(models.Model):
 class BalanceModel(models.Model):
     """Balance model - It is used to store the balance of users"""
     balance = models.DecimalField(decimal_places=6, max_digits=18, verbose_name="Wallet balance", default=0)
-    wallet = models.ForeignKey(
+    wallet: WalletModel = models.ForeignKey(
         "WalletModel", on_delete=models.CASCADE, db_column="wallet", verbose_name="Wallet"
     )
-    network = models.ForeignKey(
+    network: NetworkModel = models.ForeignKey(
         "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name",
     )
-    token = models.ForeignKey(
+    token: TokenModel = models.ForeignKey(
         "TokenModel", on_delete=models.CASCADE, db_column="token", verbose_name="Token name", blank=True, null=True
     )
-    user_id = models.ForeignKey(
+    user_id: UserModel = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column="user_id", verbose_name="Owner id"
     )
 
@@ -225,6 +225,32 @@ class BalanceModel(models.Model):
             pass
         else:
             super().save(*args, **kwargs)
+
+    def clean(self):
+        if self.network != self.token.network:
+            raise ValidationError(
+                {
+                    "token": "The token's network must be the same as the network. Network: {} != Token: {}".format(
+                        self.network.network, self.token
+                    )
+                }
+            )
+        if self.network != self.wallet.network:
+            raise ValidationError(
+                {
+                    "wallet": "The wallet's network should be the same as the network. Network: {} != Wallet network: {}".format(
+                        self.network.network, self.wallet.network
+                    )
+                }
+            )
+        if self.user_id != self.wallet.user_id:
+            raise ValidationError(
+                {
+                    "user_id": "The wallet must belong to the user who is declared in the owner id. {} != {}".format(
+                        self.user_id, self.wallet.user_id
+                    )
+                }
+            )
 
     class Meta:
         verbose_name = 'Wallet balance'
