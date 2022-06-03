@@ -19,7 +19,7 @@ class UserModel(AbstractUser, ImageFilter):
     password = models.CharField(max_length=128, blank=True, null=True)
 
     telegram_chat_id = models.IntegerField(unique=True, blank=True, null=True, verbose_name="Telegram user ID")
-    google_auth_code = models.CharField(unique=True, blank=True, null=True, verbose_name="Google auth code")
+    google_auth_code = models.CharField(unique=True, blank=True, max_length=25, null=True, verbose_name="Google auth code")
     profile_picture = models.ImageField(
         null=True, blank=True,
         verbose_name="Your photo", validators=[ImageValidators.validate_image_expansion],
