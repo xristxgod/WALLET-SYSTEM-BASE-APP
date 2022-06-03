@@ -50,3 +50,7 @@ class Utils:
                 return False
         else:
             return True
+
+    @staticmethod
+    def temporary_password(chat_id: int) -> str:
+        return f"temporary_password_{chat_id}"
