@@ -18,7 +18,7 @@ class ImageValidators:
 
     @staticmethod
     def validate_image_expansion(image) -> Optional:
-        _, extension = image.split(".")
+        _, extension = str(image).split(".")
         if extension not in ["png", "ico", "jpeg"]:
             raise ValidationError("The extension of the image: {} and should be {}.".format(
                 extension, ["png", "ico", "jpeg"]
