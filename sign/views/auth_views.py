@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import View
 
 from main.models import UserModel
-from sign.forms import LoginAuthenticationForm
+from sign.forms.auth_forms import LoginAuthenticationForm
 
 
 class LoginAuthenticationView(View):
@@ -21,8 +21,9 @@ class LoginAuthenticationView(View):
                 data = {"username": form.cleaned_data["username"]}
             else:
                 data = {"telegram_chat_id": form.cleaned_data["telegram_chat_id"]}
-
-            user: UserModel = UserModel.objects.filter(**data).exists()
+            user: UserModel = UserModel.objects.get(**data)
+            print(user)
+            print(user.password)
             if user.password is None:
                 # If the user does not have a password, then he is registered via Telegram.
                 # You should send an SMS with the code to his Telegram account

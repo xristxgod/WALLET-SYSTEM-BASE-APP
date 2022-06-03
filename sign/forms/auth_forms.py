@@ -1,10 +1,10 @@
 from django import forms
 from main.models import UserModel
 
-class LoginAuthenticationForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["user"].lable = "Username/Telegram chat id"
+
+class LoginAuthenticationForm(forms.Form):
+    """Authentication form"""
+    user = forms.CharField(max_length=255)
 
     def clean(self):
         user_data = self.cleaned_data['user']
@@ -15,12 +15,6 @@ class LoginAuthenticationForm(forms.ModelForm):
         else:
             raise forms.ValidationError("The user with the given username/chat_id was not found!")
         return self.cleaned_data
-
-    class Meta:
-        model = UserModel
-        fields = [
-            'username', 'telegram_chat_id'
-        ]
 
 
 class LoginAuthorizationForm(forms.ModelForm):
