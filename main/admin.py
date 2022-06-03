@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from main.models import UserModel
 from main.models import NetworkModel, TokenModel, TransactionStatusModel
 from main.models import WalletModel, BalanceModel
+from main.models import TransactionModel
 
 @admin.register(UserModel)
 class UserModelAdmin(UserAdmin):
@@ -102,3 +103,16 @@ class BalanceModelAdmin(admin.ModelAdmin):
     list_display_links = ("balance", "wallet", "network", "token", "user_id")
     search_fields = ("wallet", "network", "token", "user_id")
     list_filter = ("wallet", "network", "token", "user_id")
+
+
+# <<<=======================================>>> Transaction Models <<<===============================================>>>
+
+
+@admin.register(TransactionModel)
+class TransactionModelAdmin(admin.ModelAdmin):
+    fields = ("time", "transaction_hash", "fee", "amount", "inputs", "outputs", "status", "network", "token", "user_id")
+    list_display = ("correct_datetime", "transaction_hash", "network", "token", "user_id", "show_display")
+    list_display_links = ("time", "transaction_hash", "network", "token", "user_id")
+    search_fields = ("time", "transaction_hash", "network", "token", "user_id", "status")
+    list_filter = ("time", "transaction_hash", "network", "token", "user_id", "status")
+    readonly_fields = ('show_field',)

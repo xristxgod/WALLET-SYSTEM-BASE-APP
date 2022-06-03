@@ -1,5 +1,5 @@
 import uuid
-import json
+from datetime import datetime
 
 from django.db import models
 from django.template.defaultfilters import truncatechars
@@ -10,7 +10,7 @@ from django.conf import settings
 
 from src.utils.types import CoinHelper
 from src.utils.utils import UtilsImage
-from src.utils.filters import BaseFilter, ImageFilter
+from src.utils.filters import BaseFilter, ImageFilter, DatetimeFilter
 from src.utils.validators import ImageValidators, WalletValidators, TransactionValidators
 
 
@@ -261,8 +261,14 @@ class BalanceModel(models.Model):
         db_table = 'balance_model'
 
 
-class TransactionModel(models.Model):
-    time = models.IntegerField(verbose_name="The time of creation/sending/acceptance of the transaction")
+# <<<=======================================>>> Transaction Models <<<===============================================>>>
+
+
+class TransactionModel(models.Model, DatetimeFilter, ImageFilter):
+    time: int = models.IntegerField(
+        verbose_name="The time of creation/sending/acceptance of the transaction",
+        validators=[MinValueValidator(10), MaxValueValidator(10)]
+    )
     transaction_hash = models.CharField(
         verbose_name="Transaction hash", unique=True, max_length=255,
         null=True, blank=True, default=uuid.uuid4().hex
@@ -315,6 +321,25 @@ class TransactionModel(models.Model):
                     )
                 }
             )
+
+    @property
+    def correct_datetime(self) -> datetime:
+        return datetime.fromtimestamp(self.time)
+
+    @property
+    def show_display(self):
+        if self.status and self.status.logo.name:
+            return UtilsImage.image_url(image_url=self.status.logo.url, method="display")
+        else:
+            return self.status
+
+    @property
+    def show_field(self):
+        if self.status and self.status.logo.name:
+            return UtilsImage.image_url(image_url=self.status.logo.url, method="field")
+        else:
+            return self.status
+
 
     class Meta:
         verbose_name = 'Transaction'

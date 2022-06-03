@@ -14,5 +14,10 @@ class ImageFilter:
         raise NotImplementedError
 
 
+class DatetimeFilter:
+    @property
+    def correct_datetime(self):
+        raise NotImplementedError
+
 class BaseFilter(DescriptionFilter, ImageFilter):
     pass
