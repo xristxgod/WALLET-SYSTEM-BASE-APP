@@ -1,10 +1,7 @@
-from typing import Union, List, Dict
+from typing import Union
 
 from django.utils.safestring import mark_safe
 from django.db import models
-
-from src.services.__init__ import Transaction
-from src.utils.types import CRYPTO_ADDRESS
 
 
 class UtilsImage:
@@ -53,22 +50,3 @@ class Utils:
                 return False
         else:
             return True
-
-
-class UtilsTransaction:
-    """Transaction utils"""
-    @staticmethod
-    def get_participants_list(participants: List[Dict]) -> List[CRYPTO_ADDRESS]:
-        return [address.get("address") for address in participants]
-
-    @staticmethod
-    def packaging_transactions(transactions: List[models.Model]) -> List[Transaction]:
-        transactions_list: List[Transaction] = []
-        for transaction in transactions:
-            transactions_list.append(Transaction(
-                time=transaction.time, transaction_hash=transaction.transaction_hash,
-                inputs=UtilsTransaction.get_participants_list(transaction.inputs),
-                outputs=UtilsTransaction.get_participants_list(transaction.outputs),
-                amount=transaction.amount, fee=transaction.fee, status=transaction.status
-            ))
-        return transactions_list
