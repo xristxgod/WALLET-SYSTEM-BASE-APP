@@ -112,7 +112,7 @@ class BalanceModelAdmin(admin.ModelAdmin):
 class TransactionModelAdmin(admin.ModelAdmin):
     fields = ("time", "transaction_hash", "fee", "amount", "inputs", "outputs", "status", "network", "token", "user_id")
     list_display = ("correct_datetime", "transaction_hash", "network", "token", "user_id", "show_display")
-    list_display_links = ("time", "transaction_hash", "network", "token", "user_id")
+    list_display_links = ("transaction_hash", "network", "token", "user_id")
     search_fields = ("time", "transaction_hash", "network", "token", "user_id", "status")
     list_filter = ("time", "transaction_hash", "network", "token", "user_id", "status")
     readonly_fields = ('show_field',)
