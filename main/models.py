@@ -230,7 +230,7 @@ class BalanceModel(models.Model):
             super().save(*args, **kwargs)
 
     def clean(self):
-        if self.network != self.token.network:
+        if self.token and self.network != self.token.network:
             raise ValidationError(
                 {
                     "token": "The token's network must be the same as the network. Network: {} != Token: {}".format(
@@ -298,6 +298,19 @@ class TransactionModel(models.Model):
     user_id: UserModel = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column="user_id", verbose_name="Owner id"
     )
+
+    def __str__(self):
+        return f"{self.user_id}|{self.network}|{self.transaction_hash[:5]}"
+
+    def clean(self):
+        if self.token and self.network != self.token.network:
+            raise ValidationError(
+                {
+                    "token": "The token's network must be the same as the network. Network: {} != Token: {}".format(
+                        self.network.network, self.token
+                    )
+                }
+            )
 
     class Meta:
         verbose_name = 'Transaction'
