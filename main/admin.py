@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from main.models import UserModel
 from main.models import NetworkModel, TokenModel, TransactionStatusModel
-from main.models import WalletModel
+from main.models import WalletModel, BalanceModel
 
 @admin.register(UserModel)
 class UserModelAdmin(UserAdmin):
@@ -52,6 +52,9 @@ class UserModelAdmin(UserAdmin):
     readonly_fields = (*UserAdmin.readonly_fields, 'show_field',)
 
 
+# <<<=======================================>>> Base Models <<<======================================================>>>
+
+
 @admin.register(NetworkModel)
 class NetworkModelAdmin(admin.ModelAdmin):
     fields = ("network", "blockchain_url", "description", "logo", "show_field")
@@ -82,9 +85,20 @@ class TransactionStatusModelAdmin(admin.ModelAdmin):
     readonly_fields = ('show_field',)
 
 
+# <<<=======================================>>> Wallet Models <<<====================================================>>>
+
+
 @admin.register(WalletModel)
 class WalletModelAdmin(admin.ModelAdmin):
     list_display = ("address", "network", "user_id")
     list_display_links = ("address", "network", "user_id")
     search_fields = ("address", "network", "user_id")
     list_filter = ("address", "network", "user_id")
+
+
+@admin.register(BalanceModel)
+class BalanceModelAdmin(admin.ModelAdmin):
+    list_display = ("balance", "wallet", "network", "token", "user_id")
+    list_display_links = ("balance", "wallet", "network", "token", "user_id")
+    search_fields = ("wallet", "network", "token", "user_id")
+    list_filter = ("wallet", "network", "token", "user_id")

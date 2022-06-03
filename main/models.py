@@ -1,9 +1,11 @@
 from django.db import models
 from django.template.defaultfilters import truncatechars
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
+from src.utils.types import CoinHelper
 from src.utils.utils import UtilsImage
 from src.utils.filters import BaseFilter, ImageFilter
 from src.utils.validators import ImageValidators, WalletValidators
@@ -168,10 +170,15 @@ class WalletModel(models.Model):
     """Wallet model - It is used to store users' crypto wallets."""
     address = models.CharField(verbose_name="Wallet address", max_length=255, unique=True)
     private_key = models.CharField(verbose_name="Wallet private key", max_length=255, unique=True)
-    public_key = models.CharField(verbose_name="Wallet public key", max_length=255, unique=True)
-    passphrase = models.CharField(verbose_name="Wallet passphrase", max_length=25)
+    public_key = models.CharField(
+        verbose_name="Wallet public key", max_length=255, unique=True, blank=True, null=True
+    )
+    passphrase = models.CharField(
+        verbose_name="Wallet passphrase", max_length=25, blank=True, null=True
+    )
     mnemonic_phrase = models.CharField(
-        verbose_name="Wallet mnemonic phrase", max_length=255, validators=[WalletValidators.validate_mnemonic]
+        verbose_name="Wallet mnemonic phrase", max_length=255, validators=[WalletValidators.validate_mnemonic],
+        blank=True, null=True
     )
     network: str = models.ForeignKey(
         "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name",
@@ -187,3 +194,39 @@ class WalletModel(models.Model):
         verbose_name = 'Wallet'
         verbose_name_plural = 'Wallets'
         db_table = 'wallet_model'
+
+
+class BalanceModel(models.Model):
+    """Balance model - It is used to store the balance of users"""
+    balance = models.DecimalField(decimal_places=6, max_digits=18, verbose_name="Wallet balance", default=0)
+    wallet = models.ForeignKey(
+        "WalletModel", on_delete=models.CASCADE, db_column="wallet", verbose_name="Wallet"
+    )
+    network = models.ForeignKey(
+        "NetworkModel", on_delete=models.CASCADE, db_column="network", verbose_name="Network name",
+    )
+    token = models.ForeignKey(
+        "TokenModel", on_delete=models.CASCADE, db_column="token", verbose_name="Token name", blank=True, null=True
+    )
+    user_id = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column="user_id", verbose_name="Owner id"
+    )
+
+    def __str__(self):
+        return (
+            f"{self.user_id}|{self.network.network}-"
+            f"{self.token.token if self.token else CoinHelper.get_native_coin(self.network.network)}"
+        )
+
+    def save(self, *args, **kwargs):
+        if self.network.network != self.token.network:
+            pass
+        elif self.network.network != self.wallet.network:
+            pass
+        else:
+            super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Wallet balance'
+        verbose_name_plural = 'Wallet balances'
+        db_table = 'balance_model'
