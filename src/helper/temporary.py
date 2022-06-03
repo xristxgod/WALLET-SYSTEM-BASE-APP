@@ -27,7 +27,6 @@ class TemporaryCodeRepository:
         }
         return True, code
 
-
     def delete_temporary_code(self, chat_id: TELEGRAM_USER_ID) -> bool:
         if chat_id in self.temporary_codes.keys():
             self.temporary_codes.pop(chat_id)
@@ -35,10 +34,11 @@ class TemporaryCodeRepository:
 
     def get_temporary_code(self, chat_id: TELEGRAM_USER_ID) -> Optional[str]:
         code_data: Dict = self.temporary_codes.get(chat_id)
-        if code_data is not None and Utils.is_have_time(code_data.get("time")):
+        if code_data is not None and Utils.is_have_time(code_data.get("time"), minutes=self.TEMPORARY_TIME):
             return code_data.get("code")
-        elif code_data is not None and not Utils.is_have_time(code_data.get("time")):
+        elif code_data is not None and not Utils.is_have_time(code_data.get("time"), minutes=self.TEMPORARY_TIME):
             self.temporary_codes.pop(chat_id)
         return None
+
 
 temporary_code = TemporaryCodeRepository()
