@@ -4,12 +4,22 @@ from main.models import UserModel
 
 class LoginAuthenticationForm(forms.ModelForm):
     """Authentication form"""
-    user = forms.CharField(max_length=255)
-    password = forms.CharField(widget=forms.PasswordInput)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['password'].lable = 'Password'
+    user = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            "class": "form-control form-control-lg",
+            "type": "text",
+            "id": "typeUsername"
+        })
+    )
+    password = forms.CharField(
+        max_length=255,
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control form-control-lg",
+            "type": "password",
+            "id": "typePasswordX"
+        })
+    )
 
     def clean(self):
         user_data = self.cleaned_data['user']
