@@ -3,7 +3,7 @@ from typing import Dict
 
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 
@@ -46,8 +46,7 @@ class LoginAuthenticationView(View):
             else:
                 # In this case, the user has been in the system more than once and we simply authorize him.
                 if user.google_auth_code is None:
-                    user = authenticate(username=user.username, password=user.password)
-                    login(request, user)
+                    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
                     # We notify the telegram bot that we have logged in!
                     SenderToTelegram.auth_info(chat_id=chat_id)
                     return HttpResponseRedirect("/")
@@ -91,8 +90,7 @@ class LoginAuthView(View):
                 else:
                     messages.add_message(request, messages.ERROR, 'Invalid code')
         if auth:
-            user = authenticate(username=user.username, password=user.password)
-            login(request, user)
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             SenderToTelegram.auth_info(chat_id=params.get("char_id"))
             return HttpResponseRedirect("/")
         return render(request, "auth/auth_page.html", {

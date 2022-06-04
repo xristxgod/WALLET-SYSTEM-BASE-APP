@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 
 from main.models import UserModel
 from sign.forms.reg_forms import RegistrationForm
@@ -34,7 +34,6 @@ class RegistrationView(View):
                 logger.error(f"ERROR: {error}")
                 messages.add_message(request, messages.ERROR, 'What went wrong. Try again later')
                 return redirect("registration")
-            user = authenticate(username=user.username, password=user.password)
-            login(request, user)
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return HttpResponseRedirect("/")
         return render(request, "reg/registration_page.html", {"form": form})
