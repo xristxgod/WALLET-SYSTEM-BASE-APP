@@ -16,6 +16,7 @@ from src.utils.types import TELEGRAM_USER_ID
 from src.sender.sender_to_telegram import SenderToTelegram
 from config import logger
 
+
 class LoginAuthenticationView(View):
     """Authentication view - Checks if there is a user in the system"""
     def get(self, request, *args, **kwargs):
