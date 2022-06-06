@@ -5,16 +5,9 @@ from main.models import UserModel
 
 class RegistrationForm(forms.ModelForm):
     """Registration form"""
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput, max_length=255)
+    confirm_password = forms.CharField(widget=forms.PasswordInput, max_length=255)
     telegram_chat_id = forms.IntegerField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["username"].lable = "Username"
-        self.fields["password"].lable = "Password"
-        self.fields["confirm_password"].lable = "Confirm Password"
-        self.fields["telegram_chat_id"].lable = "Telegram Chat ID"
 
     def clean_username(self):
         username = self.cleaned_data["username"]
