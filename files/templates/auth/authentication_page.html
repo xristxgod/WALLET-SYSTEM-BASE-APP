@@ -23,15 +23,13 @@
                 {% csrf_token %}
 
                 <div class="form-outline mb-4">
-                    {{ form.user|set_widget:'class="form-control form-control-lg",type="text"' }}
+                    {{ form.user|set_widget:'class="form-control form-control-lg",type="text",placeholder="Username/ChatID"' }}
                 </div>
-
-
 
                 <div class="form-outline mb-4">
-                    <label class="form-label">Password</label>
-                    {{ form.password }}
+                    {{ form.password|set_widget:'class="form-control form-control-lg",type="text",placeholder="Password"' }}
                 </div>
+
                 <hr class="my-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
                 <br>
