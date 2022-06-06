@@ -8,14 +8,14 @@ class LoginAuthenticationForm(forms.ModelForm):
         max_length=255,
         widget=forms.TextInput(attrs={
             "class": "form-control form-control-lg",
-            "type": "text",
+            "type": "text"
         })
     )
     password = forms.CharField(
         max_length=255,
         widget=forms.PasswordInput(attrs={
             "class": "form-control form-control-lg",
-            "type": "password",
+            "type": "password"
         })
     )
 

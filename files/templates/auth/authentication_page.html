@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+
+{% load template_helper %}
+
 {% block title %} Authentication : {{ block.super }}{% endblock %}
 
 {% block link %}
@@ -18,10 +21,12 @@
             <h3 class="mb-5">Sign in</h3>
             <form action="" method="POST">
                 {% csrf_token %}
+
                 <div class="form-outline mb-4">
-                    <label class="form-label">Username</label>
-                    {{ form.user }}
+                    {{ form.user|set_widget:'class="form-control form-control-lg",type="text"' }}
                 </div>
+
+
 
                 <div class="form-outline mb-4">
                     <label class="form-label">Password</label>
