@@ -11,7 +11,7 @@ from main.models import UserModel
 from sign.forms.auth_forms import LoginAuthenticationForm
 from sign.forms.auth_forms import LoginCodeForm
 from src.helper.temporary import temporary_code
-from src.utils.utils import Utils, UtilsGoogleAuth
+from src.utils.utils import Utils, UtilsGoogleAuth, BaseUtils
 from src.utils.types import TELEGRAM_USER_ID
 from src.sender.sender_to_telegram import SenderToTelegram
 from config import logger
@@ -20,6 +20,8 @@ from config import logger
 class LoginAuthenticationView(View):
     """Authentication view - Checks if there is a user in the system"""
     def get(self, request, *args, **kwargs):
+        if BaseUtils.is_authorized(request):
+            return HttpResponseRedirect("/")
         form = LoginAuthenticationForm(request.POST or None)
         context = {
             "form": form
@@ -27,6 +29,8 @@ class LoginAuthenticationView(View):
         return render(request, "auth/authentication_page.html", context)
 
     def post(self, request, *args, **kwargs):
+        if BaseUtils.is_authorized(request):
+            return HttpResponseRedirect("/")
         form = LoginAuthenticationForm(request.POST or None)
         if form.is_valid():
             if form.cleaned_data.get("username") is not None:

@@ -9,6 +9,15 @@ from django.utils.safestring import mark_safe
 from django.db import models
 
 
+class BaseUtils:
+    @staticmethod
+    def is_authorized(request) -> bool:
+        """Is the user authorized in the system"""
+        if str(request.user) != "AnonymousUser":
+            return True
+        return False
+
+
 class UtilsImage:
     """Utils for image"""
     @staticmethod
