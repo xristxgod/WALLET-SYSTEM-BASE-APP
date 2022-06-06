@@ -9,7 +9,6 @@ class LoginAuthenticationForm(forms.ModelForm):
         widget=forms.TextInput(attrs={
             "class": "form-control form-control-lg",
             "type": "text",
-            "id": "typeUsername"
         })
     )
     password = forms.CharField(
@@ -17,7 +16,6 @@ class LoginAuthenticationForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={
             "class": "form-control form-control-lg",
             "type": "password",
-            "id": "typePasswordX"
         })
     )
 
