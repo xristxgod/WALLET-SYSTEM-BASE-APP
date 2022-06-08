@@ -10,7 +10,7 @@ from django.conf import settings
 
 from src.utils.types import CoinHelper
 from src.utils.utils import UtilsImage
-from src.utils.filters import BaseFilter, ImageFilter, DatetimeFilter
+from src.utils.filters import BaseFilter, ImageFilter, DatetimeFilter, NetworkFilter
 from src.utils.validators import ImageValidators, WalletValidators, TransactionValidators
 
 
@@ -200,7 +200,7 @@ class WalletModel(models.Model):
         db_table = 'wallet_model'
 
 
-class BalanceModel(models.Model):
+class BalanceModel(models.Model, NetworkFilter):
     """Balance model - It is used to store the balance of users"""
     balance = models.DecimalField(decimal_places=6, max_digits=18, verbose_name="Wallet balance", default=0)
     wallet: WalletModel = models.ForeignKey(
@@ -221,14 +221,6 @@ class BalanceModel(models.Model):
             f"{self.user_id}|{self.network.network}-"
             f"{self.token.token if self.token else CoinHelper.get_native_coin(self.network.network)}"
         )
-
-    def save(self, *args, **kwargs):
-        if self.network.network != self.token.network:
-            pass
-        elif self.network.network != self.wallet.network:
-            pass
-        else:
-            super().save(*args, **kwargs)
 
     def clean(self):
         super().clean()
@@ -257,6 +249,13 @@ class BalanceModel(models.Model):
                 }
             )
 
+    @property
+    def network_and_token(self) -> str:
+        if self.token:
+            return f"{self.token}"
+        else:
+            return f"{self.network}-{CoinHelper.get_native_coin(str(self.network))}"
+
     class Meta:
         verbose_name = 'Wallet balance'
         verbose_name_plural = 'Wallet balances'
@@ -266,7 +265,7 @@ class BalanceModel(models.Model):
 # <<<=======================================>>> Transaction Models <<<===============================================>>>
 
 
-class TransactionModel(models.Model, DatetimeFilter, ImageFilter):
+class TransactionModel(models.Model, DatetimeFilter, ImageFilter, NetworkFilter):
     time: int = models.IntegerField(
         verbose_name="The time of creation/sending/acceptance of the transaction",
         validators=[MinValueValidator(10), MaxValueValidator(10)]
@@ -324,6 +323,13 @@ class TransactionModel(models.Model, DatetimeFilter, ImageFilter):
                     )
                 }
             )
+
+    @property
+    def network_and_token(self) -> str:
+        if self.token:
+            return f"{self.token}"
+        else:
+            return f"{self.network}-{CoinHelper.get_native_coin(str(self.network))}"
 
     @property
     def correct_datetime(self) -> datetime:

@@ -101,8 +101,8 @@ class WalletModelAdmin(admin.ModelAdmin):
 
 @admin.register(BalanceModel)
 class BalanceModelAdmin(admin.ModelAdmin):
-    list_display = ("balance", "wallet", "network", "token", "user_id")
-    list_display_links = ("balance", "wallet", "network", "token", "user_id")
+    list_display = ("balance", "wallet", "network_and_token", "user_id")
+    list_display_links = ("balance", "wallet", "network_and_token", "user_id")
     search_fields = ("wallet", "network", "token", "user_id")
     list_filter = ("wallet", "network", "token", "user_id")
 
@@ -113,8 +113,8 @@ class BalanceModelAdmin(admin.ModelAdmin):
 @admin.register(TransactionModel)
 class TransactionModelAdmin(admin.ModelAdmin):
     fields = ("time", "transaction_hash", "fee", "amount", "inputs", "outputs", "status", "network", "token", "user_id")
-    list_display = ("correct_datetime", "transaction_hash", "network", "token", "user_id", "show_display")
-    list_display_links = ("transaction_hash", "network", "token", "user_id")
+    list_display = ("correct_datetime", "transaction_hash", "network_and_token", "user_id", "show_display")
+    list_display_links = ("transaction_hash", "network_and_token", "user_id")
     search_fields = ("time", "transaction_hash", "network", "token", "user_id", "status")
     list_filter = ("time", "transaction_hash", "network", "token", "user_id", "status")
     readonly_fields = ('show_field',)

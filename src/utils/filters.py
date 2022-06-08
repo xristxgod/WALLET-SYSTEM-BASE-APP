@@ -21,3 +21,9 @@ class DatetimeFilter:
 
 class BaseFilter(DescriptionFilter, ImageFilter):
     pass
+
+
+class NetworkFilter:
+    @property
+    def network_and_token(self) -> str:
+        raise NotImplementedError
