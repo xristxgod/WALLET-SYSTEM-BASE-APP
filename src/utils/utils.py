@@ -2,11 +2,13 @@ import secrets
 import string
 import base64
 from datetime import datetime, timedelta
-from typing import Union, Dict
+from typing import Union, Dict, Tuple
 
 import pyotp
 from django.utils.safestring import mark_safe
 from django.db import models
+
+from main.models import UserModel
 
 
 class BaseUtils:
@@ -16,6 +18,11 @@ class BaseUtils:
         if str(request.user) != "AnonymousUser":
             return True
         return False
+
+    @staticmethod
+    def is_auth(user_id: int) -> Tuple[bool, bool]:
+        user = UserModel.objects.get(id=user_id)
+        return user.google_auth_code is not None, user.telegram_chat_id is not None
 
 
 class UtilsImage:

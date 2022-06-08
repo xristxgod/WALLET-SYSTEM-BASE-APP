@@ -25,6 +25,7 @@ class UserModelAdmin(UserAdmin):
             {
                 "fields": (
                     "telegram_chat_id",
+                    "google_auth_code"
                 )
             }
         ),
@@ -46,6 +47,7 @@ class UserModelAdmin(UserAdmin):
             {
                 "fields": (
                     "telegram_chat_id",
+                    "google_auth_code"
                 )
             }
         )

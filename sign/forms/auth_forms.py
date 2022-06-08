@@ -28,5 +28,6 @@ class LoginAuthenticationForm(forms.ModelForm):
 
 
 class LoginCodeForm(forms.Form):
-    """Google auth form"""
-    code = forms.CharField(max_length=6)
+    """Auth form"""
+    code_google_auth = forms.IntegerField(max_length=6, required=False)
+    code_telegram_auth = forms.IntegerField(max_length=6, required=False)
