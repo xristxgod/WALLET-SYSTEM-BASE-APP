@@ -349,7 +349,6 @@ class TransactionModel(models.Model, DatetimeFilter, ImageFilter, NetworkFilter)
         else:
             return self.status
 
-
     class Meta:
         verbose_name = 'Transaction'
         verbose_name_plural = 'Transactions'
