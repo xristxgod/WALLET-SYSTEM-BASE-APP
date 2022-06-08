@@ -7,6 +7,14 @@ from src.utils.utils import Utils
 from src.utils.types import CRYPTO_NETWORK, CRYPTO_ADDRESS, CRYPTO_MNEMONIC
 
 
+class CustomValidator:
+    """Custom validator"""
+    @staticmethod
+    def validate_time(time) -> Optional:
+        if len(str(time)) != 10:
+            raise ValidationError("The number should be a pancake of 10 characters! At you: %i" % len(str(time)))
+
+
 class ImageValidators:
     """Image validators"""
     @staticmethod
@@ -44,9 +52,9 @@ class TransactionValidators:
     """Transaction validators"""
     @staticmethod
     def validate_participants(participants: List[Dict[CRYPTO_ADDRESS, float]]):
-        if participants != {}:
+        if participants != []:
             for participant in participants:
-                if participant.keys() not in ["address", "amount"]:
+                if "amount" not in participant.keys() and "address" not in participant.keys():
                     raise ValidationError((
                         "This type of data is not suitable. The list should consist of dictionaries. "
                         "Example: [{'address': wallet_address, 'amount': 12.3312}]"

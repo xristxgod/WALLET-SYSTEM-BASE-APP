@@ -11,7 +11,7 @@ from django.conf import settings
 from src.utils.types import CoinHelper
 from src.utils.utils import UtilsImage
 from src.utils.filters import BaseFilter, ImageFilter, DatetimeFilter, NetworkFilter
-from src.utils.validators import ImageValidators, WalletValidators, TransactionValidators
+from src.utils.validators import ImageValidators, WalletValidators, TransactionValidators, CustomValidator
 
 
 class UserModel(AbstractUser, ImageFilter):
@@ -268,7 +268,7 @@ class BalanceModel(models.Model, NetworkFilter):
 class TransactionModel(models.Model, DatetimeFilter, ImageFilter, NetworkFilter):
     time: int = models.IntegerField(
         verbose_name="The time of creation/sending/acceptance of the transaction",
-        validators=[MinValueValidator(10), MaxValueValidator(10)]
+        validators=[CustomValidator.validate_time]
     )
     transaction_hash = models.CharField(
         verbose_name="Transaction hash", unique=True, max_length=255,
@@ -308,10 +308,6 @@ class TransactionModel(models.Model, DatetimeFilter, ImageFilter, NetworkFilter)
 
     def __str__(self):
         return f"{self.user_id}|{self.network}|{self.transaction_hash[:5]}"
-
-    def save(self, *args, **kwargs):
-        if self.network.network == self.token.network:
-            super().save(*args, **kwargs)
 
     def clean(self):
         super().clean()

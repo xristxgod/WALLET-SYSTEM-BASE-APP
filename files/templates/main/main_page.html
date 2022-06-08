@@ -23,7 +23,7 @@
                 <td>{{ transaction.transaction_hash|truncatechars:9 }}</td>
                 <td>{{ transaction.correct_datetime }}</td>
                 <td>{{ transaction.network_and_token }}</td>
-                <td>{{ transaction.status }}</td>
+                <td>{{ transaction.status }}{{ transaction.show_display }}</td>
                 <td>{{ transaction.amount }}</td>
             </tr>
         {% endfor %}
