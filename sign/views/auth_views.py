@@ -1,5 +1,5 @@
 import json
-from typing import Dict
+from typing import Dict, Tuple
 
 from django.shortcuts import render, redirect
 from django.views.generic import View
@@ -15,6 +15,11 @@ from src.utils.utils import Utils, UtilsGoogleAuth, BaseUtils
 from src.utils.types import TELEGRAM_USER_ID
 from src.sender.sender_to_telegram import SenderToTelegram
 from config import logger
+
+
+def is_auth(user_id: int) -> Tuple[bool, bool]:
+    user = UserModel.objects.get(id=user_id)
+    return user.google_auth_code is not None, user.telegram_chat_id is not None
 
 
 class LoginAuthenticationView(View):
@@ -69,7 +74,7 @@ class LoginAuthView(View):
         except Exception as error:
             logger.error(f"ERROR: {error}")
             return redirect("login")
-        google_auth, telegram_auth = BaseUtils.is_auth(user_id=params.get("user_id"))
+        google_auth, telegram_auth = is_auth(user_id=params.get("user_id"))
         context = {
             "form": form,
             "googleAuth": google_auth,
@@ -85,37 +90,33 @@ class LoginAuthView(View):
         except Exception as error:
             logger.error(f"ERROR: {error}")
             return redirect("login")
-        google_auth, telegram_auth = BaseUtils.is_auth(user_id=params.get("user_id"))
+        google_auth, telegram_auth = is_auth(user_id=params.get("user_id"))
         if form.is_valid():
             user: UserModel = UserModel.objects.get(id=params.get("user_id"))
-            if google_auth:
-                if UtilsGoogleAuth.is_valid_code(user.google_auth_code, form.cleaned_data["code"]):
+
+            if google_auth and "code_google_auth" in form.cleaned_data:
+                if UtilsGoogleAuth.is_valid_code(user.google_auth_code, form.cleaned_data["code_google_auth"]):
                     auth[0] = True
                 else:
-                    messages.add_message(request, messages.ERROR, 'Invalid code')
-            elif telegram_auth:
+                    messages.add_message(request, messages.ERROR, 'Google Auth is invalid code')
+            else:
+                auth[0] = True
+
+            if telegram_auth and "code_telegram_auth" in form.cleaned_data:
                 code = temporary_code.get_temporary_code(chat_id=params.get("char_id"))
-                if code == form.cleaned_data["code"]:
+                if code == form.cleaned_data["code_telegram_auth"]:
                     temporary_code.delete_temporary_code(chat_id=params.get("char_id"))
                     auth[1] = True
                 else:
-                    messages.add_message(request, messages.ERROR, 'Invalid code')
-            if auth:
+                    messages.add_message(request, messages.ERROR, 'Telegram Auth is invalid code')
+            else:
+                auth[1] = True
+
+            if auth[0] and auth[1]:
                 login(request, user, backend="django.contrib.auth.backends.ModelBackend")
                 SenderToTelegram.auth_info(chat_id=params.get("char_id"))
                 return HttpResponseRedirect("/")
-            else:
-                text_go = "Google Auth code is incorrect!"
-                text_tg = "Telegram Auth code is incorrect!"
-                if not auth[0] and auth[1]:
-                    text = text_go
-                elif not auth[1] and auth[0]:
-                    text = text_tg
-                elif not auth[0] and not auth[1]:
-                    text = f"{text_go} | {text_tg}"
-                else:
-                    text = ""
-                messages.add_message(request, messages.ERROR, text)
+
         return render(request, "auth/auth_page.html", {
             "form": form,
             "googleAuth": google_auth,

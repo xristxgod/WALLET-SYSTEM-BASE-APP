@@ -8,9 +8,6 @@ import pyotp
 from django.utils.safestring import mark_safe
 from django.db import models
 
-from main.models import UserModel
-
-
 class BaseUtils:
     @staticmethod
     def is_authorized(request) -> bool:
@@ -18,12 +15,6 @@ class BaseUtils:
         if str(request.user) != "AnonymousUser":
             return True
         return False
-
-    @staticmethod
-    def is_auth(user_id: int) -> Tuple[bool, bool]:
-        user = UserModel.objects.get(id=user_id)
-        return user.google_auth_code is not None, user.telegram_chat_id is not None
-
 
 class UtilsImage:
     """Utils for image"""
@@ -104,4 +95,4 @@ class UtilsGoogleAuth:
 
     @staticmethod
     def is_valid_code(google_auth_code: str, code_now: int) -> bool:
-        return pyotp.TOTP(google_auth_code).now() == code_now
+        return int(pyotp.TOTP(google_auth_code).now()) == int(code_now)

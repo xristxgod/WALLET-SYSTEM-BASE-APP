@@ -12,6 +12,15 @@
             <form action="" method="POST">
                 {% csrf_token %}
 
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                {% endif%}
+
                 {% if form.errors %}
                     {% for field in form %}
                         {% for error in field.errors %}
@@ -29,13 +38,17 @@
                     {% endfor %}
                 {% endif %}
 
+                {% if googleAuth %}
                 <div class="form-outline mb-4">
-
+                    {{ form.code_google_auth|set_widget:'class="form-control form-control-lg",type="number",placeholder="Google code"' }}
                 </div>
+                {% endif %}
 
+                {% if telegramAuth %}
                 <div class="form-outline mb-4">
-
+                    {{ form.code_telegram_auth|set_widget:'class="form-control form-control-lg",type="number",placeholder="Telegram code"' }}
                 </div>
+                {% endif %}
 
                 <hr class="my-4">
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
