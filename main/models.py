@@ -283,11 +283,11 @@ class TransactionModel(models.Model, DatetimeFilter, ImageFilter, NetworkFilter)
         null=True, blank=True, default=0
     )
     inputs = models.JSONField(
-        verbose_name="Sender/s transaction", default=dict,
+        verbose_name="Sender/s transaction", default=list[dict],
         validators=[TransactionValidators.validate_participants]
     )
     outputs = models.JSONField(
-        verbose_name="Recipient/s transaction", default=dict,
+        verbose_name="Recipient/s transaction", default=list[dict],
         validators=[TransactionValidators.validate_participants]
     )
     status: TransactionStatusModel = models.ForeignKey(
