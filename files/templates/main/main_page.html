@@ -18,14 +18,17 @@
         </thead>
         <tbody>
         {% for transaction in transactions %}
-            <tr>
-                <th scope="row">1</th>
-                <td>{{ transaction.transaction_hash|truncatechars:9 }}</td>
-                <td>{{ transaction.correct_datetime }}</td>
-                <td>{{ transaction.network_and_token }}</td>
-                <td>{{ transaction.show_display }}</td>
-                <td>{{ transaction.amount }}</td>
-            </tr>
+            {% if transaction.network == "TRON" %}
+                <tr class="table-danger">
+            {% else %}
+                <tr>
+            {% endif %}
+                    <td scope="row">{{ transaction.transaction_hash|truncatechars:9 }}</td>
+                    <td>{{ transaction.correct_datetime }}</td>
+                    <td>{{ transaction.network_and_token }}</td>
+                    <td>{{ transaction.show_display }}</td>
+                    <td>{{ transaction.amount }}</td>
+                </tr>
         {% endfor %}
         </tbody>
     </table>
